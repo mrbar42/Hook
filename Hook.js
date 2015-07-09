@@ -449,8 +449,9 @@
         if (typeof module != 'undefined' && module.exports) {
             exports = module.exports = Hook;
         }
-
-        exports.Hook = Hook
+        else {
+            exports.Hook = Hook
+        }
     }
     else {
         window.Hook = Hook;
