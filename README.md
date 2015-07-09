@@ -91,7 +91,7 @@ note: This example uses browser use case, but this can very well be another serv
 
 ```javascript
 
-<script src="Hook.js"></script>
+<script src="Hook.min.js"></script>
 <script>
     // simulate socket - this can be any on/emit compliant websocket or websocket library
     var socket = {
