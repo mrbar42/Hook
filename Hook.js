@@ -445,13 +445,6 @@
         };
     };
 
-    if (typeof module != 'undefined') {
-        module.exports = Hook;
-    }
-    else {
-        window.Hook = Hook;
-    }
-
     if (typeof exports != 'undefined') {
         if (typeof module != 'undefined' && module.exports) {
             exports = module.exports = Hook;
