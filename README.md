@@ -1,10 +1,12 @@
 # Hook
 
-Hook is a Bi-directional helper lib the allows emitting events and accepting response using Promises and general Promise syntax
+Hook is a Bi-directional helper lib the allows emitting events and accepting response using Promises and general Promise syntax.
 It aims mainly to ease WebSocket communication with two parties (Client-Server, Server-Server). 
+
 Docs are inside the lib.
 
-The lib is completely Bi-directional, meaning that the use of the terms 'Server' and 'Client' are for the sake of a real world example
+The lib is completely Bi-directional, meaning that the use of the terms 'Server' and 'Client' are for the sake of a real world example.
+
 Theoretically both sides are capable of all the functionality.
 
 ## Usage
