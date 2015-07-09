@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hook Client Example</title>
+</head>
+<body>
+<script src="Hook.js"></script>
+<script>
+    // simulate socket - this can be any on/emit compliant websocket or websocket library
+    var socket = {
+        emit: function () {},
+        on: function () {}
+    };
+    // Client
+    var hook = new Hook(); // hook event MUST match the one on the server
+    hook
+            .bindSocket(socket)
+            .sendHello({id: 'A1'})
+            .then(function (message) {
+                console.log("Successful hello", message);
+
+                hook
+                        .send('someAction', {payload: '123'})
+                        .then(function (message) {
+                            console.log("Successful hook", message);
+                        })
+                        .catch(function (err) {
+                            console.log("failed  hook", err);
+                        });
+
+            })
+            .catch(function (err) {
+                if (err === hook.TIMEOUT) {
+                    // timeout
+                }
+                else {
+                    console.log("failed  hello", err);
+                }
+
+            });
+
+</script>
+</body>
+</html>
