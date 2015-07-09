@@ -18,11 +18,12 @@ EventEmitter is used to simulate a socket.
 
 var Hook = require('../Hook');
 
-var hook = new Hook(); // accepts one argument: hookEvent name. default '_hook'.
+var hook = new Hook(); // arguments: {string} [hookEvent] (default '_hook')
 
 hook.onHello(function (message, socket) {
-    if (message && message.id) {
+    if (message && message.id == 'A1') {
         console.log("onHello", message);
+        // mark socket as validated
         return {msg: 'hey there'}
     }
     else {
@@ -32,10 +33,11 @@ hook.onHello(function (message, socket) {
 
 hook.onHook(function (action, message, socket, next) {
     console.log("onHook", message);
-
+    
+    // check if socket is validated and call next with extra data
+    // if invalid, throw error to block
     next("extra", "arguments");
 });
-
 
 // simulate socket
 var EventEmitter = require('events').EventEmitter;

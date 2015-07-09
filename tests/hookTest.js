@@ -7,9 +7,11 @@ var EventEmitter = require('events').EventEmitter;
 var socket = new EventEmitter();
 var hook = new Hook();
 
+
 hook.onHello(function (message, socket) {
-    if (message && message.id) {
+    if (message && message.id == 'A1') {
         console.log("onHello", message);
+        // mark socket as validated
         return {msg: 'hey there'}
     }
     else {
@@ -20,6 +22,8 @@ hook.onHello(function (message, socket) {
 hook.onHook(function (action, message, socket, next) {
     console.log("onHook", message);
 
+    // check if socket is validated and call next with extra data
+    // if invalid, throw error to block
     next("extra", "arguments");
 });
 
