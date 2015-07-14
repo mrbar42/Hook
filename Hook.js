@@ -1,4 +1,8 @@
-/* Repo: https://github.com/mrbar42/Hook */
+/*
+version:    0.0.3
+Repo:       https://github.com/mrbar42/Hook
+License:    MIT
+*/
 (function () {
     'use strict';
 
