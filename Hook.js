@@ -354,6 +354,8 @@ License:    MIT
             });
             // remote side answered our hook
             socket.on(HOOK_RESPONSE, onHookResponse);
+
+            return _this;
         };
 
 
