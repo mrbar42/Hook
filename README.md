@@ -101,7 +101,8 @@ note: This example uses browser use case, but this can very well be another serv
     // Client
     var hook = new Hook(/* optional hookEvent */); // hook event MUST match the one on the server
     hook
-            .bindSocket(socket)
+            .attach(socket)
+            .bindSocket(socket) // enables 'send(message, data)' instead of 'sendTo(socket, message, data)' and 'sendHello' instead of 'sendHelloTo'
             .sendHello({id: 'A1'})
             .then(function (message) {
                 console.log("Successful hello", message);
