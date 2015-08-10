@@ -1,8 +1,8 @@
 /*
-version:    0.0.3
-Repo:       https://github.com/mrbar42/Hook
-License:    MIT
-*/
+ version:    0.0.4
+ Repo:       https://github.com/mrbar42/Hook
+ License:    MIT
+ */
 (function () {
     'use strict';
 
@@ -65,22 +65,18 @@ License:    MIT
             return Promise.resolve()
                 .then(function () {
                     if (message && message.isInvalid) {
-
                         throw _this.INVALID_MESSAGE;
                     }
                     if (!message) {
-
                         throw _this.INVALID_MESSAGE;
                     }
 
                     if (!rand) {
-
                         throw _this.INVALID_MESSAGE;
                     }
 
                     var action = message.action;
                     if (!action) {
-
                         throw _this.INVALID_MESSAGE;
                     }
 
@@ -96,11 +92,16 @@ License:    MIT
                         promise = promise.then(function (body) {
                             return new Promise(function (resolve, reject) {
                                 try {
-                                    _hookValidator(action, body, socket, function () {
-                                        var extraArgs = Array.prototype.slice.call(arguments);
-                                        args = args.concat(extraArgs);
-                                        resolve()
-                                    });
+                                    var retVal = _hookValidator(action, body, socket);
+                                    Promise
+                                        .resolve(retVal)
+                                        .then(function (extraArgs) {
+                                            if (extraArgs !== undefined) {
+                                                args = args.concat(extraArgs);
+                                            }
+                                            resolve()
+                                        })
+                                        .catch(reject);
                                 } catch (err) {
                                     reject(err)
                                 }
@@ -165,8 +166,6 @@ License:    MIT
                 .then(function (response) {
                     if (rand) {
                         response.rand = rand;
-
-
                         socket.emit(HOOK_RESPONSE, response);
                     }
                 })
@@ -205,7 +204,6 @@ License:    MIT
                 .then(function (response) {
                     if (rand) {
                         response.rand = rand;
-
 
                         socket.emit(HOOK_RESPONSE, response);
                     }
