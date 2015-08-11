@@ -1,19 +1,20 @@
-/*
- version:    0.0.4
- Repo:       https://github.com/mrbar42/Hook
- License:    MIT
+/**
+ * version:    0.0.5
+ * Repo:       https://github.com/mrbar42/Hook
+ * License:    MIT
+ * @license
  */
-(function () {
+(function (global) {
     'use strict';
 
     /**
      * Creates Bi-directional event emitting hook
      *
-     * @param {string} [hookEvent] - the base event name to base on
+     * @param {string} [hookEvent='_hook'] - event name to base on
      * @constructor
      */
     var Hook = function (hookEvent) {
-        var _this = this;
+        var _this = Object.create(null);
         var _cache = {};
         var _defaultTimeout = 6e4;
         var _hookHandlers = {};
@@ -30,11 +31,11 @@
         var HELLO_RESPONSE = BASE + ':hello:response';
 
         /** Constants */
-        var TIMEOUT = this.TIMEOUT = 'TIMEOUT';
-        var INVALID_MESSAGE = this.INVALID_MESSAGE = 'INVALID_MESSAGE';
-        var NO_HANDLERS = this.NO_HANDLERS = 'NO_HANDLERS';
-        var NO_SOCKET_BIND = this.NO_SOCKET_BIND = 'NO_SOCKET_BIND';
-        var INTERNAL_ERROR = this.INTERNAL_ERROR = 'INTERNAL_ERROR';
+        _this.TIMEOUT = 'TIMEOUT';
+        _this.INVALID_MESSAGE = 'INVALID_MESSAGE';
+        _this.NO_HANDLERS = 'NO_HANDLERS';
+        _this.NO_SOCKET_BIND = 'NO_SOCKET_BIND';
+        _this.INTERNAL_ERROR = 'INTERNAL_ERROR';
 
         /** Private functions */
         var onHookResponse = function (message) {
@@ -182,7 +183,7 @@
             promise = promise
                 .then(function () {
                     if (!_helloHandler) {
-                        throw NO_HANDLERS;
+                        throw _this.NO_HANDLERS;
                     }
 
                     return _helloHandler(message.body, socket)
@@ -273,7 +274,7 @@
          * @param {function} handler {@link Hook~onHelloHandler}
          * @returns {Hook}
          */
-        this.onHello = function (handler) {
+        _this.onHello = function (handler) {
             if (_helloHandler) {
                 console.error("called onHello more than once")
             }
@@ -303,7 +304,7 @@
          * @param {function} handler {@link Hook~onHookHandler}
          * @returns {Hook}
          */
-        this.onHook = function (handler) {
+        _this.onHook = function (handler) {
             if (_hookValidator) {
                 console.error("called onHook more than once")
             }
@@ -320,7 +321,7 @@
          *
          * @param {object} socket
          */
-        this.bindSocket = function (socket) {
+        _this.bindSocket = function (socket) {
             if (socket && typeof socket == 'object') {
                 _bindSocket = socket;
             }
@@ -336,7 +337,7 @@
          *
          * @param {object} socket
          */
-        this.attach = function (socket) {
+        _this.attach = function (socket) {
             // Hello
             // remote side sent hello request
             socket.on(HELLO_REQUEST, function (message) {
@@ -370,7 +371,7 @@
          * @param {function} [handler]
          * @returns {Hook}
          */
-        this.on = function (action, handler) {
+        _this.on = function (action, handler) {
             switch (action && typeof action) {
                 case 'function':
 
@@ -419,14 +420,14 @@
          * @param {number} [timeout] - time out in ms to wait for response
          * @returns {Promise|*} - promise that resolves on remote response or on timeout
          */
-        this.sendTo = function (socket, action, body, timeout) {
+        _this.sendTo = function (socket, action, body, timeout) {
             return emit(socket, HOOK_REQUEST, action, body, timeout);
         };
         /**
          * Same as Hook#sendTo but uses the bind socket automatically
          */
-        this.send = function (action, body, timeout) {
-            if (!_bindSocket) return Promise.reject(NO_SOCKET_BIND);
+        _this.send = function (action, body, timeout) {
+            if (!_bindSocket) return Promise.reject(_this.NO_SOCKET_BIND);
 
             return emit(_bindSocket, HOOK_REQUEST, action, body, timeout);
         };
@@ -437,19 +438,26 @@
          * @param {*} [body] - body to add along with the message
          * @returns {Promise|*} - promise that resolves on remote response or on timeout
          */
-        this.sendHelloTo = function (socket, body) {
+        _this.sendHelloTo = function (socket, body) {
             return emit(socket, HELLO_REQUEST, 'hello', body);
         };
         /**
          * Same as Hook#sendHelloTo but uses the bind socket automatically
          */
-        this.sendHello = function (body) {
-            if (!_bindSocket) return Promise.reject(NO_SOCKET_BIND);
+        _this.sendHello = function (body) {
+            if (!_bindSocket) return Promise.reject(_this.NO_SOCKET_BIND);
             return emit(_bindSocket, HELLO_REQUEST, 'hello', body);
         };
+
+        return _this;
     };
 
-    if (typeof exports != 'undefined') {
+    if (typeof define != 'undefined' && define.amd) {
+        define(function () {
+            return Hook;
+        });
+    }
+    else if (typeof exports != 'undefined') {
         if (typeof module != 'undefined' && module.exports) {
             exports = module.exports = Hook;
         }
@@ -458,6 +466,9 @@
         }
     }
     else {
-        window.Hook = Hook;
+        global.Hook = Hook;
     }
-}).call(this);
+}).call(this, typeof global != 'undefined' ? global :
+        typeof self != 'undefined' ? self :
+            typeof window != 'undefined' ? window :
+            this || {});
