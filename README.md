@@ -1,13 +1,14 @@
 # Hook
 
-Hook is a Bi-directional helper lib the allows emitting events and accepting response using Promises and general Promise syntax.
-It aims mainly to ease WebSocket communication with two parties (Client-Server, Server-Server). 
+Hook is a Universal Bi-directional helper lib the allows emitting events and accepting response using Promises and general Promise syntax.
+It aims mainly to ease authenticated WebSocket communication with two parties (Client-Server, Server-Server).
 
-Docs are inside the lib.
+If you want to dive in, the docs are inside the lib.
 
 The lib is completely Bi-directional, meaning that the use of the terms 'Server' and 'Client' are for the sake of a real world example.
-
 Theoretically both sides are capable of all the functionality.
+
+In the browser it will expose a global `Hook` constructor (Hook.min.js minified+gzip is 1.6kb)
 
 ## Usage
 
@@ -18,8 +19,10 @@ EventEmitter is used to simulate a socket.
 
 var Hook = require('../Hook');
 
-var hook = new Hook(); // arguments: {string} [hookEvent] (default '_hook')
+// the new keyword is optional and can be omitted
+var hook = new Hook(); // optional argument: {string} hookEventName (default '_hook')
 
+// authorize the socket
 hook.onHello(function (message, socket) {
     if (message && message.id == 'A1') {
         console.log("onHello", message);
