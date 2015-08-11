@@ -34,7 +34,7 @@ hook.onHello(function (message, socket) {
     }
 });
 
-hook.onHook(function (action, message, socket, next) {
+hook.onHook(function (action, message, socket) {
     console.log("onHook", message);
     
     // check if socket is validated and return extra argument or array of extra arguments (or promise that returns...)

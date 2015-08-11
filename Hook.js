@@ -65,9 +65,6 @@
 
             return Promise.resolve()
                 .then(function () {
-                    if (message && message.isInvalid) {
-                        throw _this.INVALID_MESSAGE;
-                    }
                     if (!message) {
                         throw _this.INVALID_MESSAGE;
                     }
