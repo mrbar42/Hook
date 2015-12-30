@@ -1,5 +1,5 @@
 /**
- * version:    0.0.5
+ * version:    0.0.6
  * Repo:       https://github.com/mrbar42/Hook
  * License:    MIT
  * @license
@@ -13,8 +13,12 @@
      * @param {string} [hookEvent='_hook'] - event name to base on
      * @constructor
      */
-    var Hook = function (hookEvent) {
-        var _this = Object.create(null);
+    function Hook(hookEvent) {
+        if (!(this instanceof Hook)) {
+            return new Hook(hookEvent)
+        }
+
+        var _this = this;
         var _cache = {};
         var _defaultTimeout = 6e4;
         var _hookHandlers = {};
@@ -115,8 +119,8 @@
                             var argsArray = [action].concat(args);
                             _genericHookHandler.forEach(function (handler) {
                                 chain = chain.then(function () {
-                                    return handler.apply(null, argsArray);
-                                })
+                                        return handler.apply(null, argsArray);
+                                    })
                                     .then(function (result) {
                                         if (result) {
                                             userResponse = result
@@ -132,8 +136,8 @@
                             var chain = Promise.resolve();
                             _hookHandlers[action].forEach(function (handler) {
                                 chain = chain.then(function () {
-                                    return handler.apply(null, args);
-                                })
+                                        return handler.apply(null, args);
+                                    })
                                     .then(function (result) {
                                         if (result) {
                                             userResponse = result
@@ -447,25 +451,27 @@
         };
 
         return _this;
-    };
+    }
 
     if (typeof define != 'undefined' && define.amd) {
         define(function () {
             return Hook;
         });
     }
-    else if (typeof exports != 'undefined') {
-        if (typeof module != 'undefined' && module.exports) {
-            exports = module.exports = Hook;
+    else {
+        if (typeof exports != 'undefined') {
+            if (typeof module != 'undefined' && module.exports) {
+                exports = module.exports = Hook;
+            }
+            else {
+                exports.Hook = Hook
+            }
         }
         else {
-            exports.Hook = Hook
+            global.Hook = Hook;
         }
     }
-    else {
-        global.Hook = Hook;
-    }
 }).call(this, typeof global != 'undefined' ? global :
-        typeof self != 'undefined' ? self :
-            typeof window != 'undefined' ? window :
-            this || {});
+    typeof self != 'undefined' ? self :
+        typeof window != 'undefined' ? window :
+        this || {});

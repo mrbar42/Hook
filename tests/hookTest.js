@@ -1,6 +1,6 @@
 'use strict';
 
-var Hook = require('../Hook');
+var Hook = require('../hook');
 // server
 // simulate socket
 var EventEmitter = require('events').EventEmitter;

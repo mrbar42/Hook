@@ -17,28 +17,36 @@ EventEmitter is used to simulate a socket.
 #### Server
 ```javascript
 
-var Hook = require('../Hook');
+var Hook = require('../hook');
 
 // the new keyword is optional and can be omitted
-var hook = new Hook(); // optional argument: {string} hookEventName (default '_hook')
+var hook = new Hook(); // {String} [hookEventName='_hook']
 
 // authorize the socket
 hook.onHello(function (message, socket) {
     if (message && message.id == 'A1') {
         console.log("onHello", message);
+        
         // mark socket as validated
+        socket._hook_valid = true;
+
         return {msg: 'hey there'}
     }
     else {
-        throw 'you are NOT authorized!'
+        throw 'Invalid hello credentials'
     }
 });
 
 hook.onHook(function (action, message, socket) {
     console.log("onHook", message);
-    
-    // check if socket is validated and return extra argument or array of extra arguments (or promise that returns...)
+
+    // check if socket is validated
     // if invalid, throw error to block (or return rejected promise)
+    if (!socket._hook_valid) {
+         throw 'you are NOT authorized!'
+    }
+    
+    // optional - return extra argument or array of extra arguments (or promise that returns...)
     //return "singleExtraArg";
     return ["extra", "arguments"];
 });
@@ -75,7 +83,7 @@ hook.on('someAction', function (message, socket, arg1, arg2) {
                         // this probably mean you manually sent a hook event. don't do that!
                         break;
                     case hook.INTERNAL_ERROR:
-                        // this means the remote side handler returned instance of Error
+                        // this means the remote side handler returned an instance of Error
                         break;
                     default:
                         // your own error
@@ -95,7 +103,7 @@ note: This example uses browser use case, but this can very well be another serv
 
 ```javascript
 
-<script src="Hook.min.js"></script>
+<script src="hook.min.js"></script>
 <script>
     // simulate socket - this can be any on/emit compliant websocket or websocket library
     var socket = {
@@ -103,10 +111,12 @@ note: This example uses browser use case, but this can very well be another serv
         on: function () {}
     };
     // Client
-    var hook = new Hook(/* optional hookEvent */); // hook event MUST match the one on the server
+    var hook = new Hook(); // hook event name MUST match the one on the server
     hook
             .attach(socket)
-            .bindSocket(socket) // enables 'send(message, data)' instead of 'sendTo(socket, message, data)' and 'sendHello' instead of 'sendHelloTo'
+            // enables 'send(message, data)' instead of 'sendTo(socket, message, data)'
+            // and 'sendHello' instead of 'sendHelloTo'            
+            .bindSocket(socket) 
             .sendHello({id: 'A1'})
             .then(function (message) {
                 console.log("Successful hello", message);
